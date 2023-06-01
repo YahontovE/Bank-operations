@@ -21,3 +21,30 @@ def selection_of_completed_operations(list_data, quantity=1):
         if total == quantity:
             break
     return operation
+
+
+def creating_an_output_format(info):
+    '''Создает вывод данных в заданном формате'''
+    format_data = []
+    for itm in info:
+        date = itm['date'][:10]
+        # print(date)
+        format_date = datetime.datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
+        if itm.get('from') == None:
+            itm["from"] = '->'
+            z = ''
+            from_info = ''
+        else:
+            sender = itm["from"].split()
+            from_bill = sender.pop(-1)
+            from_bill = f"{from_bill[:4]} {from_bill[4:6]}** **** {from_bill[-4:]}"
+            from_info = " ".join(sender)
+            itm["from"] = from_bill
+            z = '->'
+        to_format = f"{itm['to'].split()[0]} **{itm['to'][-4:]}"
+        format_data.append(f'''\
+{format_date} {itm["description"]} 
+{from_info} {itm["from"]} {z} {to_format}
+{itm["operationAmount"]["amount"]} {itm["operationAmount"]["currency"]["name"]}
+''')
+    return format_data
